@@ -14,7 +14,8 @@ import ChangePassword from './pages/ChangePassword';
 import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-
+import MyReports from './pages/MyReports'
+import AdminDashboard from './pages/AdminDashboard'
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
