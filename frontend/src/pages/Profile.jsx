@@ -22,7 +22,6 @@ function Profile() {
   // Check authentication on mount
   useEffect(() => {
     const init = async () => {
-      // Only check auth if we're not already authenticated
       if (!isAuthenticated) {
         await checkAuth();
       }
@@ -51,10 +50,7 @@ function Profile() {
     setIsSubmitting(true);
     try {
       const response = await api.put('/users/profile', data);
-
-      // Update local user data
       updateUser(response.data.user);
-
       toast.success('Profile updated successfully');
       setIsEditing(false);
     } catch (error) {
@@ -80,7 +76,6 @@ function Profile() {
     }
   };
 
-  // Show loading state
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -95,6 +90,14 @@ function Profile() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
           <div className="flex space-x-3">
+            <button className="px-4 py-2 " >
+            <Link
+              to={`/users/${user?.id}`}
+              className="text-sm font-medium text-[#61906B] hover:text-[#4e7357]"
+            >
+              View Public Profile
+            </Link>
+            </button>
             <button
               onClick={handleChangePassword}
               className="px-4 py-2 text-sm font-medium text-[#61906B] hover:text-[#4e7357]"
@@ -190,21 +193,13 @@ function Profile() {
                 </button>
               </>
             ) : (
-              <>
-                <Link
-                  to={`/users/${user?.id}`}
-                  className="px-4 py-2 text-sm font-medium text-[#61906B] border border-[#61906B] rounded-md hover:bg-gray-50 mr-2"
-                >
-                  View Public Profile
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 text-sm font-medium text-white bg-[#61906B] border border-transparent rounded-md hover:bg-[#4e7357] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#61906B]"
-                >
-                  Edit Profile
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                className="px-4 py-2 text-sm font-medium text-white bg-[#61906B] border border-transparent rounded-md hover:bg-[#4e7357] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#61906B]"
+              >
+                Edit Profile
+              </button>
             )}
           </div>
         </form>
