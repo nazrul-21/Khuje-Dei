@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 const AdminRoute = () => {
   const { user, isAuthenticated, isLoading } = useAuthStore();
-
+  console.log(user)
   useEffect(() => {
     if (!isLoading && isAuthenticated && user?.role !== 'admin') {
       toast.error('You do not have permission to access this page');
