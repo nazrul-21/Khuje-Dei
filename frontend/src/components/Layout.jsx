@@ -32,7 +32,7 @@ function Layout() {
               <div className="hidden md:ml-6 md:flex md:space-x-8">
                 <Link to="/" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#61906B]">Home</Link>
                 <Link to="/profile" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#61906B]">Profile</Link>
-                <Link to="/services" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#61906B]">Services</Link>
+                <Link to="/items" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#61906B]">Items</Link>
                 {user && (
                   <>
                     <Link to="/my-reports" className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#61906B]">
@@ -92,7 +92,7 @@ function Layout() {
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               <Link to="/" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-[#61906B] hover:bg-gray-50 rounded-md">Home</Link>
               <Link to="/profile" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-[#61906B] hover:bg-gray-50 rounded-md">Profile</Link>
-              <Link to="/services" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-[#61906B] hover:bg-gray-50 rounded-md">Services</Link>
+              <Link to="/items" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-[#61906B] hover:bg-gray-50 rounded-md">Items</Link>
               {user && (
                 <>
                   <Link to="/my-reports" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-[#61906B] hover:bg-gray-50 rounded-md">

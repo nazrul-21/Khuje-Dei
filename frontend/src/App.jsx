@@ -14,9 +14,14 @@ import ChangePassword from './pages/ChangePassword';
 import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-import MyReports from './pages/MyReports'
-import AdminDashboard from './pages/AdminDashboard'
+import AdminDashboard from './pages/AdminDashboard';
+import MyReports from './pages/MyReports';
+import ReportLost from './pages/ReportLost';
+import ReportFound from './pages/ReportFound';
+import Items from './pages/Items';
+import ClaimItem from './pages/ClaimItem';
 import 'react-toastify/dist/ReactToastify.css';
+import ItemDetail from './pages/ItemDetail';
 
 function App() {
   const { checkAuth } = useAuthStore();
@@ -50,10 +55,11 @@ function App() {
           
           {/* Public routes that still use the Layout */}
           <Route path="/users/:userId" element={<UserProfile />} /> {/* New route for viewing other user profiles */}
-          <Route path="/browse" element={<div className="p-4">Browse Items Page (To be implemented)</div>} />
-          <Route path="/items/:id" element={<div className="p-4">Item Details Page (To be implemented)</div>} />
-          <Route path="/report-lost" element={<div className="p-4">Report Lost Item Page (To be implemented)</div>} />
-          <Route path="/report-found" element={<div className="p-4">Report Found Item Page (To be implemented)</div>} />
+          <Route path="/items" element={<Items />} />
+          <Route path="/items/:id" element={<ItemDetail />} />
+          <Route path="/items/:itemId/claim" element={<ClaimItem />} />
+          <Route path="/report-lost" element={<ReportLost />} />
+          <Route path="/report-found" element={<ReportFound />} />
           <Route path="/about" element={<div className="p-4">About Us Page (To be implemented)</div>} />
           <Route path="/contact" element={<div className="p-4">Contact Page (To be implemented)</div>} />
           <Route path="/faq" element={<div className="p-4">FAQ Page (To be implemented)</div>} />
