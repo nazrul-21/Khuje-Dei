@@ -140,7 +140,7 @@ function Items() {
 
       // If already following, unfollow the item
       if (isFollowing) {
-        const response = await api.delete(`/items/${itemId}/unfollow`);
+        const response = await api.delete(`/items/${itemId}/follow`);
 
         if (response.data.success) {
           toast.success('You have unfollowed this item.');
@@ -414,7 +414,7 @@ function Items() {
                               const isFollowing = item.followers &&
                                 item.followers.some(follower =>
                                   follower.user === user?.id ||
-                                  (follower.user && follower.user._id === user?._id)
+                                  (follower.user && follower.user === user?._id)
                                 );
                               handleFollowItem(item._id, isFollowing);
                             }}
@@ -443,7 +443,7 @@ function Items() {
                             {isAuthenticated && item.followers &&
                               item.followers.some(follower =>
                                 follower.user === user?.id ||
-                                (follower.user && follower.user._id === user?._id)
+                                (follower.user && follower.user === user?._id)
                               )
                               ? 'Unfollow'
                               : 'Follow'}

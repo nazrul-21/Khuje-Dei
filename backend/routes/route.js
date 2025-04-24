@@ -187,6 +187,10 @@ router.put('/claims/:claimId/status', auth, isAdmin, (req, res) => {
   claimController.updateClaimStatus(req, res);
 });
 
+router.get('/users/success-rate', auth, (req, res) => {
+  userController.getUserSuccessRate(req, res);
+});
+
 // Notification routes
 // router.get('/notifications', auth, (req, res) => {
 //   notificationController.getUserNotifications(req, res);

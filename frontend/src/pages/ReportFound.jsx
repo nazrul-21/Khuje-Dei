@@ -8,7 +8,7 @@ function ReportFound() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuthStore();
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState(['Electronics', 'Clothing', 'Accessories', 'Documents', 'Pets', 'Other']);
+  const categories = ['Electronics', 'Clothing', 'Accessories', 'Documents', 'Pets', 'Other'];
 
   const [formData, setFormData] = useState({
     title: '',
@@ -61,31 +61,9 @@ function ReportFound() {
     }
   };
 
-  const handleCharacteristicChange = (index, value) => {
-    const updatedCharacteristics = [...formData.identifyingCharacteristics];
-    updatedCharacteristics[index] = value;
-    setFormData({
-      ...formData,
-      identifyingCharacteristics: updatedCharacteristics
-    });
-  };
 
-  const addCharacteristic = () => {
-    setFormData({
-      ...formData,
-      identifyingCharacteristics: [...formData.identifyingCharacteristics, '']
-    });
-  };
 
-  const removeCharacteristic = (index) => {
-    const updatedCharacteristics = [...formData.identifyingCharacteristics];
-    updatedCharacteristics.splice(index, 1);
-    setFormData({
-      ...formData,
-      identifyingCharacteristics: updatedCharacteristics
-    });
-  };
-
+  
   const handleImageChange = (e) => {
     // This would need to be connected to your image upload system
     // For now, we'll just store the file objects
@@ -119,7 +97,7 @@ function ReportFound() {
       const response = await api.post('/items', itemData);
       
       toast.success('Found item reported successfully!');
-      navigate(`/items/${response.data.item._id}`);
+      navigate(`/items`);
     } catch (error) {
       console.error('Error reporting found item:', error);
       toast.error(error.response?.data?.message || 'Failed to report found item');
@@ -128,30 +106,6 @@ function ReportFound() {
     }
   };
 
-  const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setFormData({
-            ...formData,
-            location: {
-              ...formData.location,
-              coordinates: {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude
-              }
-            }
-          });
-          toast.success('Current location detected');
-        },
-        (error) => {
-          toast.error('Unable to get your location: ' + error.message);
-        }
-      );
-    } else {
-      toast.error('Geolocation is not supported by your browser');
-    }
-  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -267,65 +221,10 @@ function ReportFound() {
                 </div>
               </div>
 
-              <div className="sm:col-span-6">
-                <button
-                  type="button"
-                  onClick={getCurrentLocation}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#61906B]"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                  </svg>
-                  Use Current Location
-                </button>
-              </div>
             </div>
           </div>
 
-          {/* Identifying Characteristics */}
-          <div>
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-medium text-gray-900">Identifying Characteristics</h2>
-              <button
-                type="button"
-                onClick={addCharacteristic}
-                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-[#61906B] bg-[#f0f7f2] hover:bg-[#e1efdf] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#61906B]"
-              >
-                Add More
-              </button>
-            </div>
-            <div className="mt-2">
-              <p className="text-sm text-gray-500">
-                Add general characteristics that can help the owner identify the item, but keep some details private so the true owner can verify.
-              </p>
-            </div>
-            <div className="mt-4 space-y-4">
-              {formData.identifyingCharacteristics.map((characteristic, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="flex-grow">
-                    <input
-                      type="text"
-                      value={characteristic}
-                      onChange={(e) => handleCharacteristicChange(index, e.target.value)}
-                      className="shadow-sm focus:ring-[#61906B] focus:border-[#61906B] block w-full sm:text-sm border-gray-300 rounded-md"
-                      placeholder="e.g. Black leather with a zipper"
-                    />
-                  </div>
-                  {index > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => removeCharacteristic(index)}
-                      className="ml-2 flex-shrink-0 text-red-500 hover:text-red-700"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          
 
           {/* Images */}
           <div>

@@ -85,7 +85,7 @@ function ClaimItem() {
       
       if (response.data.success) {
         toast.success('Your claim has been submitted successfully');
-        navigate(`/items/${itemId}`);
+        navigate(`/items`);
       } else {
         toast.error(response.data.message || 'Failed to submit claim');
       }

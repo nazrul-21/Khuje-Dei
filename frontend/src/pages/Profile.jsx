@@ -10,6 +10,8 @@ function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResendingVerification, setIsResendingVerification] = useState(false);
+  const [successData, setSuccessData] = useState(null);
+  const [isLoadingSuccessData, setIsLoadingSuccessData] = useState(false);
   const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
@@ -36,8 +38,27 @@ function Profile() {
         name: user.name || '',
         email: user.email || ''
       });
+      
+      // Fetch success rate data
+      fetchSuccessData();
     }
   }, [user, reset]);
+
+  // Fetch success rate data
+  const fetchSuccessData = async () => {
+    if (!user) return;
+    
+    setIsLoadingSuccessData(true);
+    try {
+      const response = await api.get('/users/success-rate');
+      setSuccessData(response.data);
+    } catch (error) {
+      console.error('Failed to fetch success data:', error);
+      toast.error('Failed to load success rate information');
+    } finally {
+      setIsLoadingSuccessData(false);
+    }
+  };
 
   // Redirect if not authenticated and not loading
   useEffect(() => {
@@ -105,6 +126,33 @@ function Profile() {
               Change Password
             </button>
           </div>
+        </div>
+
+        {/* Success Rate Section */}
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+          <h2 className="text-lg font-semibold text-gray-800 mb-2">Success Statistics</h2>
+          {isLoadingSuccessData ? (
+            <div className="flex justify-center py-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#61906B]"></div>
+            </div>
+          ) : successData ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white p-3 rounded shadow-sm">
+                <p className="text-sm text-gray-500">Success Rate</p>
+                <p className="text-2xl font-bold text-[#61906B]">{successData.successRate}%</p>
+              </div>
+              <div className="bg-white p-3 rounded shadow-sm">
+                <p className="text-sm text-gray-500">Successful Returns</p>
+                <p className="text-2xl font-bold text-[#61906B]">{successData.successCount}</p>
+              </div>
+              <div className="bg-white p-3 rounded shadow-sm">
+                <p className="text-sm text-gray-500">Total Items Reported</p>
+                <p className="text-2xl font-bold text-[#61906B]">{successData.totalReportedItems}</p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-500 italic">No success data available</p>
+          )}
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

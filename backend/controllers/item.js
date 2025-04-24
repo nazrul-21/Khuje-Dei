@@ -2,6 +2,7 @@
 import Item from '../models/item.js';
 import User from '../models/user.js';
 import sendEmail from '../utils/sendEmail.js';
+import Success from '../models/success.js';
 import mongoose from 'mongoose';
 
 // Helper function to check if user owns the item
@@ -406,6 +407,7 @@ export const deleteItem = async (req, res) => {
 };
 
 // Update item status (admin only, handled by middleware)
+// Update item status (admin only, handled by middleware)
 export const updateItemStatus = async (req, res) => {
   try {
     const { itemId } = req.params;
@@ -445,6 +447,27 @@ export const updateItemStatus = async (req, res) => {
       { $set: { status } },
       { new: true }
     );
+
+    // If status is changed to 'resolved', update the user's success count
+    if (status === 'resolved') {
+      // Check if user already has a success record
+      const successRecord = await Success.findOne({ reportedBy: item.reportedBy._id });
+      
+      if (successRecord) {
+        // Update existing success record
+        await Success.findByIdAndUpdate(
+          successRecord._id,
+          { $inc: { successCount: 1 } }
+        );
+      } else {
+        // Create new success record
+        const newSuccessRecord = new Success({
+          reportedBy: item.reportedBy._id,
+          successCount: 1
+        });
+        await newSuccessRecord.save();
+      }
+    }
 
     // Status change message for email
     const statusMessage = `Your item "${item.title}" status has been changed to ${status}.`;
@@ -528,9 +551,21 @@ export const followItem = async (req, res) => {
     );
 
     if (isFollowing) {
-      return res.status(400).json({
-        success: false,
-        message: 'You are already following this item'
+      // Remove user from item followers
+      await Item.findByIdAndUpdate(
+        itemId,
+        { $pull: { followers: { user: userId } } }
+      );
+
+      // Remove item from user's followingItems
+      await User.findByIdAndUpdate(
+        userId,
+        { $pull: { followingItems: { item: itemId } } }
+      );
+      
+      return res.status(200).json({
+        success: true,
+        message: 'Item unfollowed successfully'
       });
     }
 
@@ -568,6 +603,7 @@ export const followItem = async (req, res) => {
     });
   }
 };
+
 
 // Unfollow an item
 export const unfollowItem = async (req, res) => {
