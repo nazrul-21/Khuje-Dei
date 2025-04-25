@@ -3,7 +3,6 @@ import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom'
 import useAdminStore from '../store/adminStore';
 import useAuthStore from '../store/authStore';
 import { toast } from 'react-toastify';
-import { set } from 'mongoose';
 
 // User Management Component
 const UserManagement = () => {
@@ -299,9 +298,9 @@ const ReportManagement = () => {
                 <td className="py-2 px-4">{report.reason}</td>
                 <td className="py-2 px-4">
                   <span className={`px-2 py-1 rounded text-xs ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      report.status === 'reviewed' ? 'bg-blue-100 text-blue-800' :
-                        report.status === 'resolved' ? 'bg-green-100 text-green-800' :
-                          'bg-gray-100 text-gray-800'
+                    report.status === 'reviewed' ? 'bg-blue-100 text-blue-800' :
+                      report.status === 'resolved' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
                     }`}>
                     {report.status.charAt(0).toUpperCase() + report.status.slice(1)}
                   </span>
@@ -592,32 +591,32 @@ const ItemManagement = () => {
       return matchesType && matchesCategory && matchesStatus && matchesSearch;
     })
     : [];
-  
-    const handleClaimStatusChange = async (claimId, status, adminNotes) => {
-      try {
-        const result = await updateClaimStatus(claimId, status, adminNotes);
-        if (result) {
-          toast.success('Claim status updated successfully');
-          
-          // Update the claim in the selectedItem state
-          if (selectedItem && selectedItem.claims) {
-            const updatedClaims = selectedItem.claims.map(claim => 
-              claim._id === claimId ? { ...claim, status, adminNotes } : claim
-            );
-            setSelectedItem({ ...selectedItem, claims: updatedClaims });
-          }
-          
-          // Refresh all items to get updated data
-          getAllItems();
-          return true;
+
+  const handleClaimStatusChange = async (claimId, status, adminNotes) => {
+    try {
+      const result = await updateClaimStatus(claimId, status, adminNotes);
+      if (result) {
+        toast.success('Claim status updated successfully');
+
+        // Update the claim in the selectedItem state
+        if (selectedItem && selectedItem.claims) {
+          const updatedClaims = selectedItem.claims.map(claim =>
+            claim._id === claimId ? { ...claim, status, adminNotes } : claim
+          );
+          setSelectedItem({ ...selectedItem, claims: updatedClaims });
         }
-        return false;
-      } catch (error) {
-        toast.error('Failed to update claim status');
-        return false;
+
+        // Refresh all items to get updated data
+        getAllItems();
+        return true;
       }
-    };
-  
+      return false;
+    } catch (error) {
+      toast.error('Failed to update claim status');
+      return false;
+    }
+  };
+
 
 
 
@@ -723,9 +722,9 @@ const ItemManagement = () => {
                     <td className="py-2 px-4">{item.reportedBy?.name || 'Unknown'}</td>
                     <td className="py-2 px-4">
                       <span className={`px-2 py-1 rounded text-xs ${item.status === 'active' ? 'bg-green-100 text-green-800' :
-                          item.status === 'claimed' ? 'bg-blue-100 text-blue-800' :
-                            item.status === 'resolved' ? 'bg-purple-100 text-purple-800' :
-                              'bg-gray-100 text-gray-800'
+                        item.status === 'claimed' ? 'bg-blue-100 text-blue-800' :
+                          item.status === 'resolved' ? 'bg-purple-100 text-purple-800' :
+                            'bg-gray-100 text-gray-800'
                         }`}>
                         {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                       </span>
@@ -843,7 +842,7 @@ const ItemManagement = () => {
 
               <div>
                 {/* <p className="text-gray-600 font-medium mb-2">Images:</p> */}
-                
+
 
                 {selectedItem.claims && selectedItem.claims.length > 0 && (
                   <div className="mt-6">
@@ -858,8 +857,8 @@ const ItemManagement = () => {
                           <div className="flex justify-between">
                             <p className="font-medium">{claim.claimant?.name || 'Unknown'}</p>
                             <span className={`px-2 py-1 rounded text-xs ${claim.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                claim.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                  'bg-red-100 text-red-800'
+                              claim.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                'bg-red-100 text-red-800'
                               }`}>
                               {claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}
                             </span>
@@ -873,12 +872,12 @@ const ItemManagement = () => {
                   </div>
                 )}
                 {selectedClaim && (
-  <ClaimDetails 
-    claim={selectedClaim} 
-    onClose={() => setSelectedClaim(null)} 
-    onStatusChange={handleClaimStatusChange} 
-  />
-)}
+                  <ClaimDetails
+                    claim={selectedClaim}
+                    onClose={() => setSelectedClaim(null)}
+                    onStatusChange={handleClaimStatusChange}
+                  />
+                )}
               </div>
             </div>
 
@@ -926,6 +925,422 @@ const ItemManagement = () => {
 };
 
 
+
+// Volunteer Management Component
+const VolunteerManagement = () => {
+  const {
+    volunteers,
+    volunteerApplications,
+    getVolunteerApplications,
+    getApprovedVolunteers,
+    approveVolunteer,
+    rejectVolunteer,
+    removeVolunteerStatus,
+    error,
+    clearError,
+    promoteVolunteer
+  } = useAdminStore();
+  const [selectedVolunteer, setSelectedVolunteer] = useState(null);
+  const [activeTab, setActiveTab] = useState('applications');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchVolunteerData();
+  }, []);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      clearError();
+    }
+  }, [error, clearError]);
+
+  const fetchVolunteerData = async () => {
+    setLoading(true);
+    try {
+      await getVolunteerApplications();
+      await getApprovedVolunteers();
+    } catch (error) {
+      toast.error('Failed to load volunteer data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePromote = async (volunteerId, currentLevel) => {
+    // Determine next level
+    let nextLevel;
+    if (currentLevel === 'junior') {
+      nextLevel = 'senior';
+    } else if (currentLevel === 'senior') {
+      nextLevel = 'lead';
+    } else {
+      toast.info('Volunteer is already at the highest level');
+      return;
+    }
+
+    const reason = prompt(`Reason for promoting to ${nextLevel} (optional):`);
+    if (reason !== null) {
+      const result = await promoteVolunteer(volunteerId, nextLevel, reason);
+      if (result) {
+        toast.success(`Volunteer promoted to ${nextLevel} successfully`);
+        fetchVolunteerData();
+      }
+    }
+  };
+
+  const handleApprove = async (volunteerId) => {
+    const result = await approveVolunteer(volunteerId);
+    if (result) {
+      toast.success('Volunteer application approved successfully');
+      fetchVolunteerData();
+    }
+  };
+
+  const handleReject = async (volunteerId, reason) => {
+    const result = await rejectVolunteer(volunteerId, reason);
+    if (result) {
+      toast.success('Volunteer application rejected');
+      fetchVolunteerData();
+    }
+  };
+
+  const handleRemove = async (volunteerId, reason) => {
+    const result = await removeVolunteerStatus(volunteerId, reason);
+    if (result) {
+      toast.success('Volunteer status removed successfully');
+      fetchVolunteerData();
+    }
+  };
+
+  const openVolunteerDetails = (volunteer) => {
+    setSelectedVolunteer(volunteer);
+  };
+
+  const closeVolunteerDetails = () => {
+    setSelectedVolunteer(null);
+  };
+
+  if (loading && !volunteerApplications?.length && !volunteers?.length) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold mb-6">Volunteer Management</h2>
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow p-6">
+      <h2 className="text-xl font-semibold mb-6">Volunteer Management</h2>
+
+      <div className="mb-6 flex border-b">
+        <button
+          onClick={() => setActiveTab('applications')}
+          className={`px-4 py-2 ${activeTab === 'applications' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+        >
+          Pending Applications ({volunteerApplications?.length || 0})
+        </button>
+        <button
+          onClick={() => setActiveTab('volunteers')}
+          className={`px-4 py-2 ${activeTab === 'volunteers' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+        >
+          Approved Volunteers ({volunteers?.length || 0})
+        </button>
+      </div>
+
+      {activeTab === 'applications' && (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="py-2 px-4 text-left">Name</th>
+                <th className="py-2 px-4 text-left">Email</th>
+                <th className="py-2 px-4 text-left">Applied On</th>
+                <th className="py-2 px-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {volunteerApplications.length > 0 ? (
+                volunteerApplications.map((application) => (
+                  <tr key={application._id} className="border-t">
+                    <td className="py-2 px-4">{application.user.name}</td>
+                    <td className="py-2 px-4">{application.user.email}</td>
+                    <td className="py-2 px-4">{new Date(application.application.appliedAt).toLocaleDateString()}</td>
+                    <td className="py-2 px-4 flex gap-2">
+                      <button
+                        onClick={() => openVolunteerDetails(application)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
+                      >
+                        View Details
+                      </button>
+                      <button
+                        onClick={() => handleApprove(application._id)}
+                        className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => {
+                          const reason = prompt('Reason for rejection (optional):');
+                          if (reason !== null) {
+                            handleReject(application._id, reason);
+                          }
+                        }}
+                        className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs"
+                      >
+                        Reject
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="py-4 text-center text-gray-500">
+                    No pending applications
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {activeTab === 'volunteers' && (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="py-2 px-4 text-left">Name</th>
+                <th className="py-2 px-4 text-left">Email</th>
+                <th className="py-2 px-4 text-left">Joined On</th>
+                <th className="py-2 px-4 text-left">Level</th>
+                <th className="py-2 px-4 text-left">Items Helped</th>
+                <th className="py-2 px-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {volunteers.length > 0 ? (
+                volunteers.map((volunteer) => (
+                  <tr key={volunteer._id} className="border-t">
+                    <td className="py-2 px-4">{volunteer.user.name}</td>
+                    <td className="py-2 px-4">{volunteer.user.email}</td>
+                    <td className="py-2 px-4">
+                      {volunteer.stats.joinedAt ? new Date(volunteer.stats.joinedAt).toLocaleDateString() : 'N/A'}
+                    </td>
+                    <td className="py-2 px-4">
+                      <span className={`px-2 py-1 rounded text-xs ${volunteer.level === 'junior' ? 'bg-blue-100 text-blue-800' :
+                          volunteer.level === 'senior' ? 'bg-purple-100 text-purple-800' :
+                            'bg-yellow-100 text-yellow-800'
+                        }`}>
+                        {volunteer.level ? volunteer.level.charAt(0).toUpperCase() + volunteer.level.slice(1) : 'Junior'}
+                      </span>
+                    </td>
+                    <td className="py-2 px-4">{volunteer.stats.itemsHelped}</td>
+                    <td className="py-2 px-4 flex gap-2">
+                      <button
+                        onClick={() => openVolunteerDetails(volunteer)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
+                      >
+                        View Details
+                      </button>
+                      {(volunteer.level !== 'lead') && (
+                        <button
+                          onClick={() => handlePromote(volunteer._id, volunteer.level || 'junior')}
+                          className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs"
+                        >
+                          Promote
+                        </button>
+                      )}
+                      <button
+                        onClick={() => {
+                          const reason = prompt('Reason for removing volunteer status (optional):');
+                          if (reason !== null) {
+                            handleRemove(volunteer._id, reason);
+                          }
+                        }}
+                        className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs"
+                      >
+                        Remove Status
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="py-4 text-center text-gray-500">
+                    No approved volunteers
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Volunteer Details Modal */}
+      {selectedVolunteer && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Volunteer Details</h2>
+              <button
+                onClick={closeVolunteerDetails}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <p className="text-gray-600 font-medium">Name:</p>
+                <p>{selectedVolunteer.user?.name || selectedVolunteer.user?.name}</p>
+              </div>
+              <div>
+                <p className="text-gray-600 font-medium">Email:</p>
+                <p>{selectedVolunteer.user?.email || selectedVolunteer.user?.email}</p>
+              </div>
+              <div>
+                <p className="text-gray-600 font-medium">Status:</p>
+                <p className="capitalize">{selectedVolunteer.status}</p>
+              </div>
+              <div>
+                <p className="text-gray-600 font-medium">Applied On:</p>
+                <p>{new Date(selectedVolunteer.application?.appliedAt).toLocaleDateString()}</p>
+              </div>
+              <div>
+                <p className="text-gray-600 font-medium">Level:</p>
+                <p className="capitalize">{selectedVolunteer.level || 'Junior'}</p>
+              </div>
+              {selectedVolunteer.stats?.joinedAt && (
+                <div>
+                  <p className="text-gray-600 font-medium">Joined On:</p>
+                  <p>{new Date(selectedVolunteer.stats.joinedAt).toLocaleDateString()}</p>
+                </div>
+              )}
+              {selectedVolunteer.availability && (
+                <div>
+                  <p className="text-gray-600 font-medium">Availability:</p>
+                  <p className="capitalize">{selectedVolunteer.availability}</p>
+                </div>
+              )}
+            </div>
+            
+
+            {selectedVolunteer.application && (
+              <>
+                <div className="mb-4">
+                  <p className="text-gray-600 font-medium">Reason for applying:</p>
+                  <p className="whitespace-pre-wrap">{selectedVolunteer.application.reason}</p>
+                </div>
+                <div className="mb-4">
+                  <p className="text-gray-600 font-medium">Experience:</p>
+                  <p className="whitespace-pre-wrap">{selectedVolunteer.application.experience}</p>
+                </div>
+              </>
+            )}
+
+            {selectedVolunteer.bio && (
+              <div className="mb-4">
+                <p className="text-gray-600 font-medium">Bio:</p>
+                <p className="whitespace-pre-wrap">{selectedVolunteer.bio}</p>
+              </div>
+            )}
+
+            {selectedVolunteer.specializations && selectedVolunteer.specializations.length > 0 && (
+              <div className="mb-4">
+                <p className="text-gray-600 font-medium">Specializations:</p>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {selectedVolunteer.specializations.map((specialization, index) => (
+                    <span key={index} className="bg-gray-100 px-2 py-1 rounded text-sm">
+                      {specialization}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+
+            {selectedVolunteer.location && (selectedVolunteer.location.city || selectedVolunteer.location.area) && (
+              <div className="mb-4">
+                <p className="text-gray-600 font-medium">Location:</p>
+                <p>{[selectedVolunteer.location.city, selectedVolunteer.location.area].filter(Boolean).join(', ')}</p>
+              </div>
+            )}
+            
+
+            <div className="flex justify-end gap-2 mt-6">
+        {selectedVolunteer.status === 'approved' && selectedVolunteer.level !== 'lead' && (
+          <button
+            onClick={() => {
+              const currentLevel = selectedVolunteer.level || 'junior';
+              const nextLevel = currentLevel === 'junior' ? 'senior' : 'lead';
+
+                handlePromote(selectedVolunteer._id, currentLevel);
+                closeVolunteerDetails();
+              
+            }}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+          >
+            Promote to {selectedVolunteer.level === 'junior' ? 'Senior' : 'Lead'}
+          </button>
+        )}
+              {selectedVolunteer.status === 'pending' && (
+                <>
+                  <button
+                    onClick={() => {
+                      handleApprove(selectedVolunteer._id);
+                      closeVolunteerDetails();
+                    }}
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => {
+                      const reason = prompt('Reason for rejection (optional):');
+                      if (reason !== null) {
+                        handleReject(selectedVolunteer._id, reason);
+                        closeVolunteerDetails();
+                      }
+                    }}
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                  >
+                    Reject
+                  </button>
+                </>
+              )}
+              {selectedVolunteer.status === 'approved' && (
+                <button
+                  onClick={() => {
+                    const reason = prompt('Reason for removing volunteer status (optional):');
+                    if (reason !== null) {
+                      handleRemove(selectedVolunteer._id, reason);
+                      closeVolunteerDetails();
+                    }
+                  }}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Remove Volunteer Status
+                </button>
+              )}
+              <button
+                onClick={closeVolunteerDetails}
+                className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Main Admin Dashboard Component
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -970,16 +1385,81 @@ function AdminDashboard() {
         >
           Item Management
         </Link>
+        <Link
+          to="/admin/volunteers"
+          className={`px-4 py-2 ${location.pathname === '/admin/volunteers' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+        >
+          Volunteer Management
+        </Link>
       </div>
 
       <Routes>
         <Route path="users" element={<UserManagement />} />
         <Route path="reports" element={<ReportManagement />} />
         <Route path="items" element={<ItemManagement />} />
+        <Route path="volunteers" element={<VolunteerManagement />} />
       </Routes>
     </div>
   );
 }
 
-
 export default AdminDashboard;
+
+
+// // Main Admin Dashboard Component
+// function AdminDashboard() {
+//   const navigate = useNavigate();
+//   const location = useLocation();
+//   const { user } = useAuthStore();
+
+//   useEffect(() => {
+//     // Redirect to users by default
+//     if (location.pathname === '/admin') {
+//       navigate('/admin/users');
+//     }
+//   }, [location, navigate]);
+
+//   // Check if user is admin
+//   useEffect(() => {
+//     if (user && user.role !== 'admin') {
+//       navigate('/profile');
+//       toast.error('You do not have permission to access the admin dashboard');
+//     }
+//   }, [user, navigate]);
+
+//   return (
+//     <div className="p-6">
+//       <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+
+//       <div className="mb-6 flex border-b">
+//         <Link
+//           to="/admin/users"
+//           className={`px-4 py-2 ${location.pathname === '/admin/users' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+//         >
+//           User Management
+//         </Link>
+//         <Link
+//           to="/admin/reports"
+//           className={`px-4 py-2 ${location.pathname === '/admin/reports' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+//         >
+//           Report Management
+//         </Link>
+//         <Link
+//           to="/admin/items"
+//           className={`px-4 py-2 ${location.pathname === '/admin/items' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+//         >
+//           Item Management
+//         </Link>
+//       </div>
+
+//       <Routes>
+//         <Route path="users" element={<UserManagement />} />
+//         <Route path="reports" element={<ReportManagement />} />
+//         <Route path="items" element={<ItemManagement />} />
+//       </Routes>
+//     </div>
+//   );
+// }
+
+
+// export default AdminDashboard;

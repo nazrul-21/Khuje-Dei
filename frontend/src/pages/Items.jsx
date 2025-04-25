@@ -173,6 +173,7 @@ function Items() {
 
   // Helper function to get the first image or a placeholder
   const getItemImage = (item) => {
+    console.log(item)
     if (item.images && item.images.length > 0) {
       // Return the first image from the item
       return item.images[0].startsWith('http')

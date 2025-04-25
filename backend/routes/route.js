@@ -13,8 +13,9 @@ import * as adminController from '../controllers/admin.js';
 import * as reportController from '../controllers/report.js';
 import * as itemController from '../controllers/item.js';
 import * as claimController from '../controllers/claim.js';
-import * as notificationController from '../controllers/notification.js';
-// import * as ratingController from '../controllers/rating.js';
+import * as volunteerController from '../controllers/volunteer.js';
+import * as botChatController from '../controllers/chat.js';
+
 
 // Authentication routes
 router.post('/auth/register', (req, res) => {
@@ -221,5 +222,63 @@ router.post('/upload-multiple', auth, upload.array('images', 5), uploadMultipleI
 
 // Delete image
 router.delete('/:filename', auth, deleteImage);
+
+
+
+// Volunteer routes
+router.get('/volunteers', (req, res) => {
+  volunteerController.getAllVolunteers(req, res);
+});
+
+
+
+router.post('/volunteers/apply', auth, (req, res) => {
+  volunteerController.applyForVolunteer(req, res);
+});
+
+router.get('/volunteers/my-status', auth, (req, res) => {
+  volunteerController.getMyVolunteerStatus(req, res);
+});
+
+router.put('/volunteers/profile', auth, (req, res) => {
+  volunteerController.updateVolunteerProfile(req, res);
+});
+router.get('/volunteers/:volunteerId', (req, res) => {
+  volunteerController.getVolunteerById(req, res);
+});
+
+// Admin volunteer management routes
+router.get('/admin/volunteers/applications', auth, isAdmin, (req, res) => {
+  volunteerController.getVolunteerApplications(req, res);
+});
+
+router.put('/admin/volunteers/:volunteerId/approve', auth, isAdmin, (req, res) => {
+  volunteerController.approveVolunteerApplication(req, res);
+});
+
+router.put('/admin/volunteers/:volunteerId/reject', auth, isAdmin, (req, res) => {
+  volunteerController.rejectVolunteerApplication(req, res);
+});
+
+router.put('/admin/volunteers/:volunteerId/remove', auth, isAdmin, (req, res) => {
+  volunteerController.removeVolunteerStatus(req, res);
+});
+
+router.put('/admin/volunteers/:volunteerId/promote', auth, isAdmin, (req, res) => {
+  volunteerController.promoteVolunteer(req, res);
+});
+
+// Chat routes
+router.get('/bot-chat', auth, (req, res) => {
+  botChatController.getBotChat(req, res);
+});
+
+router.post('/bot-chat/message', auth, (req, res) => {
+  botChatController.sendBotMessage(req, res);
+});
+
+router.post('/bot-chat/clear', auth, (req, res) => {
+  botChatController.clearBotChat(req, res);
+});
 
 export default router;

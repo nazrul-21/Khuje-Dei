@@ -11,6 +11,87 @@ const useAdminStore = create((set, get) => ({
   error: null,
   itemError: null,
 
+  // In adminStore.js
+  promoteVolunteer: async (volunteerId, level, reason) => {
+    try {
+      set({ isLoading: true });
+      const response = await api.put(`/admin/volunteers/${volunteerId}/promote`, { 
+        level, 
+        reason 
+      });
+      
+      // Update the volunteers list
+      set(state => ({
+        volunteers: state.volunteers.map(volunteer => 
+          volunteer._id === volunteerId 
+            ? { ...volunteer, level: level } 
+            : volunteer
+        )
+      }));
+      
+      set({ isLoading: false });
+      return true;
+    } catch (error) {
+      set({ 
+        error: error.response?.data?.message || 'Failed to promote volunteer', 
+        isLoading: false 
+      });
+      return false;
+    }
+  }
+,  
+getVolunteerApplications: async () => {
+  try {
+    const response = await api.get('/admin/volunteers/applications');
+    set({ volunteerApplications: response.data });
+    return true;
+  } catch (error) {
+    set({ error: error.response?.data?.message || 'Failed to fetch volunteer applications' });
+    return false;
+  }
+},
+
+getApprovedVolunteers: async () => {
+  try {
+    const response = await api.get('/volunteers');
+    set({ volunteers: response.data });
+    return true;
+  } catch (error) {
+    set({ error: error.response?.data?.message || 'Failed to fetch approved volunteers' });
+    return false;
+  }
+},
+
+approveVolunteer: async (volunteerId) => {
+  try {
+    await api.put(`/admin/volunteers/${volunteerId}/approve`);
+    return true;
+  } catch (error) {
+    set({ error: error.response?.data?.message || 'Failed to approve volunteer' });
+    return false;
+  }
+},
+
+rejectVolunteer: async (volunteerId, reason) => {
+  try {
+    await api.put(`/admin/volunteers/${volunteerId}/reject`, { reason });
+    return true;
+  } catch (error) {
+    set({ error: error.response?.data?.message || 'Failed to reject volunteer' });
+    return false;
+  }
+},
+
+removeVolunteerStatus: async (volunteerId, reason) => {
+  try {
+    await api.put(`/admin/volunteers/${volunteerId}/remove`, { reason });
+    return true;
+  } catch (error) {
+    set({ error: error.response?.data?.message || 'Failed to remove volunteer status' });
+    return false;
+  }
+},
+
   // User management
   getAllUsers: async () => {
     set({ isLoading: true, error: null });

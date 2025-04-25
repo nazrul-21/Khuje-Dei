@@ -8,7 +8,7 @@ function ItemDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuthStore();
-  
+
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -23,21 +23,23 @@ function ItemDetail() {
     try {
       setLoading(true);
       const response = await api.get(`/items/${id}`);
-      setItem(response.data);
-      
+      setItem(response.data.item);
+
       // Check if current user is the owner
       if (isAuthenticated && user?._id && response.data.reportedBy?._id === user._id) {
         setIsOwner(true);
       }
-      
+
       // Check if current user is following this item
-      if (isAuthenticated && user?._id && response.data.followers) {
-        const following = response.data.followers.some(
-          follower => follower.user === user.id || 
-                    (follower.user && follower.user._id === user._id)
+      if (isAuthenticated && user?._id && response.data.item.followers) {
+        const following = response.data.item.followers.some(
+          follower => follower.user === user?._id ||
+            (follower.user && follower.user._id === user?._id)
         );
         setIsFollowing(following);
       }
+
+
     } catch (error) {
       console.error('Error fetching item details:', error);
       toast.error('Failed to load item details');
@@ -70,8 +72,8 @@ function ItemDetail() {
 
     try {
       if (isFollowing) {
-        // Unfollow the item
-        const response = await api.delete(`/items/${id}/unfollow`);
+        // Unfollow the item - Fix the endpoint to match Items.jsx
+        const response = await api.delete(`/items/${id}/follow`);
         if (response.data.success) {
           toast.success('You have unfollowed this item.');
           setIsFollowing(false);
@@ -90,6 +92,7 @@ function ItemDetail() {
           toast.error(response.data.message || 'Failed to follow item');
         }
       }
+      setIsFollowing(!isFollowing);
     } catch (error) {
       console.error(`Error ${isFollowing ? 'unfollowing' : 'following'} item:`, error);
       if (error.response && error.response.data && error.response.data.message) {
@@ -136,32 +139,25 @@ function ItemDetail() {
     }
   };
 
-  // Helper function to get the image URL or a placeholder
-  const getItemImage = (imagePath, index) => {
-    if (!imagePath) return '/placeholders/default.jpg';
-    
-    return imagePath.startsWith('http')
-      ? imagePath
-      : `http://localhost:5000${imagePath}`;
+  // Replace the current getItemImage function with this improved version
+  const getItemImage = (item) => {
+    // item = item.item;
+    if (item.images && item.images.length > 0) {
+      // Return the first image from the item
+      return item.images[0].startsWith('http')
+        ? item.images[0]
+        : `http://localhost:5000${item.images[0]}`;
+    }
+
+    // If no images, try to use a category-specific placeholder
+    try {
+      return `/placeholders/${item.category.toLowerCase()}.jpg`;
+    } catch (error) {
+      // Default fallback
+      return '/placeholders/default.png';
+    }
   };
 
-  // Function to handle image errors
-  const handleImageError = (e, category) => {
-    e.target.onerror = null; // Prevent infinite loop
-    const categoryPlaceholder = `/placeholders/${category?.toLowerCase() || 'default'}.jpg`;
-    
-    // Create a temporary image to check if category placeholder exists
-    const tempImg = new Image();
-    tempImg.onerror = () => {
-      // If category placeholder doesn't exist, use default
-      e.target.src = `/placeholders/default.jpg`;
-    };
-    tempImg.onload = () => {
-      // If category placeholder exists, use it
-      e.target.src = categoryPlaceholder;
-    };
-    tempImg.src = categoryPlaceholder;
-  };
 
   if (loading) {
     return (
@@ -234,52 +230,34 @@ function ItemDetail() {
       <div className="bg-white shadow-sm rounded-lg overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Image Gallery */}
-          <div className="p-6">
-            <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg mb-4">
-              {item.images && item.images.length > 0 ? (
-                <img
-                  src={getItemImage(item.images[activeImageIndex])}
-                  alt={item.title}
-                  className="w-full h-96 object-cover rounded-lg"
-                  onError={(e) => handleImageError(e, item.category)}
-                />
-              ) : (
-                <img
-                  src={`/placeholders/${item.category?.toLowerCase() || 'default'}.jpg`}
-                  alt={item.title}
-                  className="w-full h-96 object-cover rounded-lg"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/placeholders/default.jpg";
-                  }}
-                />
-              )}
-            </div>
+          <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg mb-4">
+            <div className="h-96 w-full overflow-hidden">
+              <img
+                src={getItemImage(item)}
+                alt={item.title}
+                className="w-full h-full object-cover rounded-lg"
+                onError={(e) => {
+                  e.target.onerror = null; // Prevent infinite loop
+                  // Try category-specific placeholder first
+                  const categoryPlaceholder = `/placeholders/${item.category?.toLowerCase() || 'default'}.jpg`;
 
-            {/* Thumbnail gallery */}
-            {item.images && item.images.length > 1 && (
-              <div className="grid grid-cols-5 gap-2">
-                {item.images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setActiveImageIndex(index)}
-                    className={`relative h-20 overflow-hidden rounded border-2 ${
-                      index === activeImageIndex 
-                        ? 'border-[#61906B]' 
-                        : 'border-transparent hover:border-gray-300'
-                    }`}
-                  >
-                    <img
-                      src={getItemImage(image)}
-                      alt={`Thumbnail ${index + 1}`}
-                      className="h-full w-full object-cover"
-                      onError={(e) => handleImageError(e, item.category)}
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
+                  // Create a temporary image to check if category placeholder exists
+                  const tempImg = new Image();
+                  tempImg.onerror = () => {
+                    // If category placeholder doesn't exist, use default
+                    e.target.src = `/placeholders/default.jpg`;
+                  };
+                  tempImg.onload = () => {
+                    // If category placeholder exists, use it
+                    e.target.src = categoryPlaceholder;
+                  };
+                  tempImg.src = categoryPlaceholder;
+                }}
+              />
+
+            </div>
           </div>
+
 
           {/* Item Details */}
           <div className="p-6">
@@ -298,7 +276,7 @@ function ItemDetail() {
             </div>
 
             <h1 className="text-2xl font-bold text-gray-900 mb-2">{item.title}</h1>
-            
+
             {item.status !== 'active' && (
               <div className="mb-4 bg-yellow-50 border-l-4 border-yellow-400 p-4">
                 <div className="flex">
@@ -327,10 +305,10 @@ function ItemDetail() {
                   <dd className="mt-1 text-sm text-gray-900">{new Date(item.dateLostOrFound).toLocaleDateString()}</dd>
                 </div>
 
-                <div className="sm:col-span-1">
+                {/* <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">Location</dt>
                   <dd className="mt-1 text-sm text-gray-900">{item.location.name || item.location}</dd>
-                </div>
+                </div> */}
 
                 {item.color && (
                   <div className="sm:col-span-1">
@@ -349,9 +327,19 @@ function ItemDetail() {
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">Reported By</dt>
                   <dd className="mt-1 text-sm text-gray-900">
-                    {item.reportedBy?.name || 'Anonymous'}
+                    {item.reportedBy?._id ? (
+                      <Link
+                        to={`/users/${item.reportedBy._id}`}
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        {item.reportedBy.name || 'Anonymous'}
+                      </Link>
+                    ) : (
+                      'Anonymous'
+                    )}
                   </dd>
                 </div>
+
 
                 {item.identifyingFeatures && (
                   <div className="sm:col-span-2">
@@ -402,9 +390,9 @@ function ItemDetail() {
                     <button
                       onClick={handleFollowItem}
                       className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium 
-                      ${isFollowing 
-                        ? 'text-[#61906B] bg-white border-[#61906B] hover:bg-gray-50' 
-                        : 'text-white bg-[#61906B] hover:bg-[#4e7757]'} 
+                      ${isFollowing
+                          ? 'text-[#61906B] bg-white border-[#61906B] hover:bg-gray-50'
+                          : 'text-white bg-[#61906B] hover:bg-[#4e7757]'} 
                       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#61906B]`}
                     >
                       <svg className="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -417,7 +405,13 @@ function ItemDetail() {
                             : "M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"}
                         />
                       </svg>
-                      {isFollowing ? 'Unfollow' : 'Follow'}
+                      {isAuthenticated && item.followers &&
+                        item.followers.some(follower =>
+                          follower.user === user?.id ||
+                          (follower.user && follower.user === user?._id)
+                        )
+                        ? 'Unfollow'
+                        : 'Follow'}
                     </button>
                   )}
 

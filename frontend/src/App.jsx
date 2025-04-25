@@ -9,7 +9,7 @@ import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
-import UserProfile from './pages/UserProfile'; // Import the new component
+import UserProfile from './pages/UserProfile'; 
 import ChangePassword from './pages/ChangePassword';
 import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
@@ -22,6 +22,12 @@ import Items from './pages/Items';
 import ClaimItem from './pages/ClaimItem';
 import 'react-toastify/dist/ReactToastify.css';
 import ItemDetail from './pages/ItemDetail';
+import Volunteers from './pages/Volunteers';
+import VolunteerApply from './pages/VolunteerApply';
+import VolunteerStatus from './pages/VolunteerStatus';
+import BotChat from './pages/BotChat';
+// import VolunteerProfile from './pages/VolunteerProfile';
+// import VolunteerDashboard from './pages/VolunteerDashboard';
 
 function App() {
   const { checkAuth } = useAuthStore();
@@ -48,6 +54,14 @@ function App() {
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/my-reports" element={<MyReports />} />
             <Route path="/invite" element={ <InvitePage />} />
+            <Route path="/volunteer-apply" element={<VolunteerApply />} />
+            <Route path="/volunteer-status" element={<VolunteerStatus />} />
+            <Route path="/bot-chat" element={<BotChat />} />
+            
+            {/* Volunteer routes */}
+            {/* <Route path="/volunteer-dashboard" element={<VolunteerDashboard />} />
+            <Route path="/volunteer-profile" element={<VolunteerProfile />} /> */}
+            
             {/* Admin routes */}
             <Route path="/admin/*" element={<AdminDashboard />} />
           </Route>
@@ -60,6 +74,8 @@ function App() {
           <Route path="/items/:itemId/claim" element={<ClaimItem />} />
           <Route path="/report-lost" element={<ReportLost />} />
           <Route path="/report-found" element={<ReportFound />} />
+          <Route path="/volunteers" element={<Volunteers />} />
+          <Route path="/volunteers/:volunteerId" element={<UserProfile />} />
           <Route path="/about" element={<div className="p-4">About Us Page (To be implemented)</div>} />
           <Route path="/contact" element={<div className="p-4">Contact Page (To be implemented)</div>} />
           <Route path="/faq" element={<div className="p-4">FAQ Page (To be implemented)</div>} />
