@@ -8,7 +8,7 @@ function ReportLost() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuthStore();
   const [loading, setLoading] = useState(false);
-  const categories = ['Electronics', 'Clothing', 'Accessories', 'Documents', 'Pets', 'Other'];
+  const categories = ['Electronics', 'Clothing', 'Accessories', 'Documents', 'Pets', 'x', 'Other'];
 
   const [formData, setFormData] = useState({
     title: '',
