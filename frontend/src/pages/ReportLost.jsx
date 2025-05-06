@@ -210,7 +210,7 @@ function ReportLost() {
                   <select
                     id="category"
                     name="category"
-                    required
+                  
                     value={formData.category}
                     onChange={handleChange}
                     className="shadow-sm focus:ring-[#61906B] focus:border-[#61906B] block w-full sm:text-sm border-gray-300 rounded-md"

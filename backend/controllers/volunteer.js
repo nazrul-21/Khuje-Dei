@@ -52,7 +52,7 @@ export const promoteVolunteer = async (req, res) => {
 export const getAllVolunteers = async (req, res) => {
   try {
     const volunteers = await Volunteer.find({ status: 'approved' })
-      .populate('user', 'name email createdAt', 'level')
+      .populate('user', 'name email createdAt')
       .sort({ 'stats.joinedAt': -1 });
     
     res.status(200).json(volunteers);

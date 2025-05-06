@@ -13,7 +13,7 @@ const Volunteers = () => {
     console.log("here")
     const fetchVolunteers = async () => {
       try {
-        const response = await api.get('/volunteers'); 
+        const response = await api.get('/volunteers'); // Use api instead of axios and remove '/api' prefix
         // Ensure we're setting an array to volunteers
         setVolunteers(Array.isArray(response.data) ? response.data : []);
         console.log('Volunteers data:', response.data); // Debug log
