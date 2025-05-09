@@ -61,7 +61,7 @@ const Volunteers = () => {
           community who contribute their time to make Khuje Dei more effective.
         </p>
       </div>
-
+      
       {volunteersArray.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-600 text-lg">No volunteers found.</p>
