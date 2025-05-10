@@ -3,6 +3,46 @@ import Invitation from '../models/invitation.js';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import sendEmail from '../utils/sendEmail.js';
+import Success from '../models/success.js';
+import Item from '../models/item.js';
+
+
+// Get user success rate
+export const getUserSuccessRate = async (req, res) => {
+  try {
+    const userId = req.params.userId || req.user.userId;
+    
+    // Find user
+    const user = await User.findById(userId).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Find success record for the user
+    const successRecord = await Success.findOne({ reportedBy: userId });
+    
+    // Find total number of items reported by the user
+    const totalReportedItems = await Item.countDocuments({ 
+      reportedBy: userId,
+      status: { $in: ['active', 'claimed', 'resolved', 'expired'] }
+    });
+    
+    // Calculate success rate
+    const successCount = successRecord ? successRecord.successCount : 0;
+    const successRate = totalReportedItems > 0 
+      ? (successCount / totalReportedItems) * 100 
+      : 0;
+    
+    res.status(200).json({
+      successCount,
+      totalReportedItems,
+      successRate: parseFloat(successRate.toFixed(2))
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 // Get user profile
 export const getProfile = async (req, res) => {
