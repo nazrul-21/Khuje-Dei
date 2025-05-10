@@ -2,6 +2,10 @@
 import express from 'express';
 import { auth } from '../middleware/auth.js';
 import { isAdmin } from '../middleware/isAdmin.js';
+<<<<<<< HEAD
+=======
+import { upload, uploadSingleImage, uploadMultipleImages, deleteImage } from '../controllers/media.js';
+>>>>>>> origin/main
 
 const router = express.Router();
 
@@ -10,6 +14,13 @@ import * as authController from '../controllers/auth.js';
 import * as userController from '../controllers/user.js';
 import * as adminController from '../controllers/admin.js';
 import * as reportController from '../controllers/report.js';
+<<<<<<< HEAD
+=======
+import * as itemController from '../controllers/item.js';
+import * as claimController from '../controllers/claim.js';
+import * as notificationController from '../controllers/notification.js';
+// import * as ratingController from '../controllers/rating.js';
+>>>>>>> origin/main
 
 // Authentication routes
 router.post('/auth/register', (req, res) => {
@@ -109,7 +120,16 @@ router.get('/admin/reports', auth, isAdmin, (req, res) => {
 
 router.put('/admin/reports/:reportId/status', auth, isAdmin, (req, res) => {
   adminController.updateReportStatus(req, res);
+<<<<<<< HEAD
   // res.status(200).json({ message: 'Update report status route' });
+=======
+});
+router.get('/admin/claims', auth, isAdmin, (req, res) => {
+  adminController.getAllClaims(req, res);
+});
+router.get('/admin/items', auth, isAdmin, (req, res) => {
+  adminController.getAllItems(req, res);
+>>>>>>> origin/main
 });
 
 // Report routes
@@ -123,4 +143,92 @@ router.get('/reports/my-reports', auth, (req, res) => {
   // res.status(200).json({ message: 'Get my reports route' });
 });
 
+<<<<<<< HEAD
+=======
+// Item routes
+router.post('/items', auth, upload.array('images', 5), (req, res) => {
+  itemController.createItem(req, res);
+});
+
+router.get('/items', (req, res) => {
+  itemController.getAllItems(req, res);
+});
+
+router.get('/items/search', (req, res) => {
+  itemController.searchItems(req, res);
+});
+
+router.get('/items/:itemId', (req, res) => {
+  itemController.getItemById(req, res);
+});
+
+router.put('/items/:itemId', auth, (req, res) => {
+  itemController.updateItem(req, res);
+});
+
+router.delete('/items/:itemId', auth, (req, res) => {
+  itemController.deleteItem(req, res);
+});
+
+router.put('/items/:itemId/status', auth, isAdmin, (req, res) => {
+  itemController.updateItemStatus(req, res);
+});
+
+router.post('/items/:itemId/follow', auth, (req, res) => {
+  itemController.followItem(req, res);
+});
+
+router.delete('/items/:itemId/follow', auth, (req, res) => {
+  itemController.unfollowItem(req, res);
+});
+
+// Claim routes
+router.post('/items/:itemId/claims', auth, (req, res) => {
+  claimController.createClaim(req, res);
+});
+
+router.get('/items/:itemId/claims', auth, (req, res) => {
+  claimController.getItemClaims(req, res);
+});
+
+router.get('/claims/:claimId', auth, (req, res) => {
+  claimController.getClaimById(req, res);
+});
+
+router.put('/claims/:claimId/status', auth, isAdmin, (req, res) => {
+  claimController.updateClaimStatus(req, res);
+});
+
+// Notification routes
+// router.get('/notifications', auth, (req, res) => {
+//   notificationController.getUserNotifications(req, res);
+// });
+
+// router.put('/notifications/:notificationId/read', auth, (req, res) => {
+//   notificationController.markNotificationAsRead(req, res);
+// });
+
+// router.put('/notifications/read-all', auth, (req, res) => {
+//   notificationController.markAllNotificationsAsRead(req, res);
+// });
+
+// Rating routes
+// router.post('/users/:userId/ratings', auth, (req, res) => {
+//   ratingController.rateUser(req, res);
+// });
+
+// router.get('/users/:userId/ratings', (req, res) => {
+//   ratingController.getUserRatings(req, res);
+// });
+
+// Upload single image
+router.post('/upload', auth, upload.single('image'), uploadSingleImage);
+
+// Upload multiple images
+router.post('/upload-multiple', auth, upload.array('images', 5), uploadMultipleImages);
+
+// Delete image
+router.delete('/:filename', auth, deleteImage);
+
+>>>>>>> origin/main
 export default router;
