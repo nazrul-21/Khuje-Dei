@@ -1,5 +1,9 @@
 import User from '../models/user.js';
 import Report from '../models/report.js';
+<<<<<<< HEAD
+=======
+import Item from '../models/item.js';
+>>>>>>> origin/main
 import bcrypt from 'bcryptjs';
 
 // Get all users
@@ -175,5 +179,113 @@ export const updateReportStatus = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 
 // we are
+=======
+export const getAllClaims = async (req, res) => {
+  try {
+    console.log("Inside getAllClaims");
+    const { status } = req.query;
+    let query = {};
+    
+    // Add status filter if provided
+    if (status) {
+      query.status = status;
+    }
+    
+    const claims = await Claim.find(query)
+      .populate('claimant', 'name email avatar')
+      .populate({
+        path: 'item',
+        select: 'title type category status images',
+        populate: {
+          path: 'reportedBy',
+          select: 'name email'
+        }
+      })
+      .sort({ createdAt: -1 });
+    
+    res.status(200).json({
+      success: true,
+      claims
+    });
+  } catch (error) {
+    console.error('Error fetching all claims:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch claims',
+      error: error.message
+    });
+  }
+};
+
+export const getAllItems = async (req, res) => {
+  console.log('getAllItems function called');
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
+    // Build filter object based on query parameters
+    const filter = {};
+    
+    if (req.query.type) filter.type = req.query.type;
+    if (req.query.category) filter.category = req.query.category;
+    if (req.query.status) filter.status = req.query.status;
+    
+    // Location-based filtering
+    if (req.query.location) {
+      filter['location.name'] = { $regex: req.query.location, $options: 'i' };
+    }
+    
+    // Date range filtering
+    if (req.query.fromDate || req.query.toDate) {
+      filter.dateLostOrFound = {};
+      if (req.query.fromDate) filter.dateLostOrFound.$gte = new Date(req.query.fromDate);
+      if (req.query.toDate) filter.dateLostOrFound.$lte = new Date(req.query.toDate);
+    }
+
+    // If user ID is provided, filter by user
+    if (req.query.userId) {
+      filter.reportedBy = req.query.userId;
+    }
+
+    const items = await Item.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('reportedBy', 'name email avatar averageRating')
+      .populate({
+        path: 'claims',
+        model: 'Claim',
+        populate: [
+          {
+            path: 'claimant',
+            model: 'User',
+            select: 'name email avatar'
+          }
+        ],
+        select: 'status proofOfOwnership identifyingInformation createdAt meetupDetails'
+      });
+
+    const totalItems = await Item.countDocuments(filter);
+    const totalPages = Math.ceil(totalItems / limit);
+
+    res.status(200).json({
+      success: true,
+      currentPage: page,
+      totalPages,
+      totalItems,
+      items
+    });
+  } catch (error) {
+    console.error('Error fetching items:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch items',
+      error: error.message
+    });
+  }
+};
+>>>>>>> origin/main

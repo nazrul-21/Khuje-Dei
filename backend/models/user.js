@@ -19,7 +19,11 @@ const UserSchema = new mongoose.Schema({
     },
     role: {
       type: String,
+<<<<<<< HEAD
       enum: ['user', 'admin'],
+=======
+      enum: ['user', 'volunteer', 'admin'],
+>>>>>>> origin/main
       default: 'user'
     },
     isActive: {
@@ -44,4 +48,8 @@ const UserSchema = new mongoose.Schema({
   });
 
 const User = mongoose.model('User', UserSchema);
+<<<<<<< HEAD
 export default User;
+=======
+export default User;
+>>>>>>> origin/main
