@@ -3,17 +3,29 @@ import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom'
 import useAdminStore from '../store/adminStore';
 import useAuthStore from '../store/authStore';
 import { toast } from 'react-toastify';
+<<<<<<< HEAD
+=======
+import { set } from 'mongoose';
+>>>>>>> origin/main
 
 // User Management Component
 const UserManagement = () => {
   const { users, getAllUsers, searchUsers, filteredUsers, restrictUser, activateUser, error, clearError } = useAdminStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddUserModal, setShowAddUserModal] = useState(false);
+<<<<<<< HEAD
   
   useEffect(() => {
     getAllUsers();
   }, [getAllUsers]);
   
+=======
+
+  useEffect(() => {
+    getAllUsers();
+  }, [getAllUsers]);
+
+>>>>>>> origin/main
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -50,7 +62,11 @@ const UserManagement = () => {
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">User Management</h2>
+<<<<<<< HEAD
         <button 
+=======
+        <button
+>>>>>>> origin/main
           onClick={() => setShowAddUserModal(true)}
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
         >
@@ -66,14 +82,22 @@ const UserManagement = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border rounded px-3 py-2 flex-grow"
         />
+<<<<<<< HEAD
         <button 
+=======
+        <button
+>>>>>>> origin/main
           type="submit"
           className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded"
         >
           Search
         </button>
         {searchTerm && (
+<<<<<<< HEAD
           <button 
+=======
+          <button
+>>>>>>> origin/main
             type="button"
             onClick={() => {
               setSearchTerm('');
@@ -111,14 +135,22 @@ const UserManagement = () => {
                 <td className="py-2 px-4">
                   {user.role !== 'admin' && (
                     user.isActive ? (
+<<<<<<< HEAD
                       <button 
+=======
+                      <button
+>>>>>>> origin/main
                         onClick={() => handleRestrict(user._id || user.id)}
                         className="text-red-500 hover:text-red-700 mr-2"
                       >
                         Restrict
                       </button>
                     ) : (
+<<<<<<< HEAD
                       <button 
+=======
+                      <button
+>>>>>>> origin/main
                         onClick={() => handleActivate(user._id || user.id)}
                         className="text-green-500 hover:text-green-700 mr-2"
                       >
@@ -247,11 +279,19 @@ const AddUserModal = ({ onClose }) => {
 const ReportManagement = () => {
   const { reports, getAllReports, updateReportStatus, error, clearError } = useAdminStore();
   const [selectedReport, setSelectedReport] = useState(null);
+<<<<<<< HEAD
   
   useEffect(() => {
     getAllReports();
   }, [getAllReports]);
   
+=======
+
+  useEffect(() => {
+    getAllReports();
+  }, [getAllReports]);
+
+>>>>>>> origin/main
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -277,7 +317,11 @@ const ReportManagement = () => {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold mb-6">Report Management</h2>
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> origin/main
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
           <thead className="bg-gray-100">
@@ -297,12 +341,20 @@ const ReportManagement = () => {
                 <td className="py-2 px-4">{report.reportedBy?.name || 'Unknown'}</td>
                 <td className="py-2 px-4">{report.reason}</td>
                 <td className="py-2 px-4">
+<<<<<<< HEAD
                   <span className={`px-2 py-1 rounded text-xs ${
                     report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                     report.status === 'reviewed' ? 'bg-blue-100 text-blue-800' :
                     report.status === 'resolved' ? 'bg-green-100 text-green-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
+=======
+                  <span className={`px-2 py-1 rounded text-xs ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      report.status === 'reviewed' ? 'bg-blue-100 text-blue-800' :
+                        report.status === 'resolved' ? 'bg-green-100 text-green-800' :
+                          'bg-gray-100 text-gray-800'
+                    }`}>
+>>>>>>> origin/main
                     {report.status.charAt(0).toUpperCase() + report.status.slice(1)}
                   </span>
                 </td>
@@ -318,7 +370,11 @@ const ReportManagement = () => {
                     <option value="resolved">Resolved</option>
                     <option value="dismissed">Dismissed</option>
                   </select>
+<<<<<<< HEAD
                   <button 
+=======
+                  <button
+>>>>>>> origin/main
                     onClick={() => openReportDetails(report)}
                     className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
                   >
@@ -337,14 +393,22 @@ const ReportManagement = () => {
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Report Details</h2>
+<<<<<<< HEAD
               <button 
+=======
+              <button
+>>>>>>> origin/main
                 onClick={closeReportDetails}
                 className="text-gray-500 hover:text-gray-700"
               >
                 ✕
               </button>
             </div>
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> origin/main
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
                 <p className="text-gray-600 font-medium">Reported User:</p>
@@ -371,7 +435,11 @@ const ReportManagement = () => {
                 <p className="whitespace-pre-wrap">{selectedReport.description}</p>
               </div>
             </div>
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> origin/main
             <div className="flex justify-end">
               <button
                 onClick={closeReportDetails}
@@ -388,12 +456,557 @@ const ReportManagement = () => {
 };
 
 
+<<<<<<< HEAD
+=======
+// ClaimDetails Component Fix
+const ClaimDetails = ({ claim, onClose, onStatusChange }) => {
+  const [status, setStatus] = useState(claim.status);
+  const [adminNotes, setAdminNotes] = useState(claim.adminNotes || '');
+
+  const handleSubmit = async () => {
+    const result = await onStatusChange(claim._id, status, adminNotes);
+    if (result) {
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Claim Details</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <p className="text-gray-600 font-medium">Claimant:</p>
+            <p>{claim.claimant?.name || 'Unknown'}</p>
+          </div>
+          {/* <div>
+            <p className="text-gray-600 font-medium">Item:</p>
+            <p>{claim.item?.title || 'Unknown Item'}</p>
+          </div> */}
+          <div>
+            <p className="text-gray-600 font-medium">Status:</p>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="border rounded px-2 py-1 w-full mt-1"
+            >
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+          <div>
+            <p className="text-gray-600 font-medium">Date Submitted:</p>
+            <p>{new Date(claim.createdAt).toLocaleString()}</p>
+          </div>
+        </div>
+
+        {/* <div className="mb-4">
+          <p className="text-gray-600 font-medium">Proof of Ownership:</p>
+          <p className="whitespace-pre-wrap">{claim.proofOfOwnership}</p>
+        </div> */}
+
+        <div className="mb-4">
+          <p className="text-gray-600 font-medium">Identifying Information:</p>
+          <p className="whitespace-pre-wrap">{claim.identifyingInformation}</p>
+        </div>
+
+        {claim.meetupDetails && Object.keys(claim.meetupDetails).length > 0 && (
+          <div className="mb-4">
+            <p className="text-gray-600 font-medium">Meetup Details:</p>
+            <p>Location: {claim.meetupDetails.location || 'Not specified'}</p>
+            <p>Date: {claim.meetupDetails.date ? new Date(claim.meetupDetails.date).toLocaleString() : 'Not specified'}</p>
+            <p>Notes: {claim.meetupDetails.notes || 'None'}</p>
+          </div>
+        )}
+
+        <div className="mb-4">
+          <p className="text-gray-600 font-medium">Admin Notes:</p>
+          <textarea
+            value={adminNotes}
+            onChange={(e) => setAdminNotes(e.target.value)}
+            className="w-full border rounded px-3 py-2 mt-1"
+            rows="3"
+            placeholder="Add notes about this claim..."
+          ></textarea>
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={onClose}
+            className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            Update Claim
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ItemManagement = () => {
+  const { items, getAllItems, updateItemStatus, itemError, clearItemError, isLoading, updateClaimStatus } = useAdminStore();
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState({
+    type: '',
+    category: '',
+    status: ''
+  });
+  const [selectedClaim, setSelectedClaim] = useState(null);
+
+  // Add a function to open claim details
+  const openClaimDetails = (claim) => {
+    setSelectedClaim(claim);
+  };
+
+
+  // Load items when component mounts
+  useEffect(() => {
+    getAllItems();
+  }, [getAllItems]);
+
+  // Handle errors with toast notifications
+  useEffect(() => {
+    if (itemError) {
+      toast.error(itemError);
+      clearItemError();
+    }
+  }, [itemError, clearItemError]);
+
+  // Update an item's status
+  const handleStatusChange = async (itemId, status) => {
+    const result = await updateItemStatus(itemId, status);
+    if (result) {
+      toast.success('Item status updated successfully');
+
+      // If the item is currently selected in the modal, update it there too
+      if (selectedItem && selectedItem._id === itemId) {
+        setSelectedItem({ ...selectedItem, status });
+      }
+    }
+  };
+
+  // Handle search form submission
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Actually search using the searchTerm
+    // We'll use the getAllItems function with proper query parameters
+    // In a real implementation, you might want to use searchItems instead
+    getAllItems({ search: searchTerm });
+  };
+
+  // Update filter state when filter inputs change
+  const handleFilterChange = (e) => {
+    setFilter({
+      ...filter,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  // Apply filters
+  const applyFilters = () => {
+    getAllItems({
+      type: filter.type,
+      category: filter.category,
+      status: filter.status,
+      search: searchTerm
+    });
+  };
+
+  // Open and close item details modal
+  const openItemDetails = (item) => {
+    setSelectedItem(item);
+  };
+
+  const closeItemDetails = () => {
+    setSelectedItem(null);
+  };
+
+  // Clear search and filters
+  const clearSearch = () => {
+    setSearchTerm('');
+    getAllItems();
+  };
+
+  // Filter items based on search term and filters
+  // This applies client-side filtering for the current items in state
+  // Replace the filteredItems definition with this:
+  const filteredItems = Array.isArray(items)
+    ? items.filter(item => {
+      console.log("Filtering item:", item);
+      // Apply filters
+      const matchesType = !filter.type || item.type === filter.type;
+      const matchesCategory = !filter.category || item.category === filter.category;
+      const matchesStatus = !filter.status || item.status === filter.status;
+      const matchesSearch = !searchTerm ||
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.description?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      return matchesType && matchesCategory && matchesStatus && matchesSearch;
+    })
+    : [];
+  
+    const handleClaimStatusChange = async (claimId, status, adminNotes) => {
+      try {
+        const result = await updateClaimStatus(claimId, status, adminNotes);
+        if (result) {
+          toast.success('Claim status updated successfully');
+          
+          // Update the claim in the selectedItem state
+          if (selectedItem && selectedItem.claims) {
+            const updatedClaims = selectedItem.claims.map(claim => 
+              claim._id === claimId ? { ...claim, status, adminNotes } : claim
+            );
+            setSelectedItem({ ...selectedItem, claims: updatedClaims });
+          }
+          
+          // Refresh all items to get updated data
+          getAllItems();
+          return true;
+        }
+        return false;
+      } catch (error) {
+        toast.error('Failed to update claim status');
+        return false;
+      }
+    };
+  
+
+
+
+  return (
+    <div className="bg-white rounded-lg shadow p-6">
+      <h2 className="text-xl font-semibold mb-6">Item Management</h2>
+
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <form onSubmit={handleSearch} className="md:col-span-4 flex gap-2">
+          <input
+            type="text"
+            placeholder="Search items..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border rounded px-3 py-2 flex-grow"
+          />
+          <button
+            type="submit"
+            className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded"
+          >
+            Search
+          </button>
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded"
+            >
+              Clear
+            </button>
+          )}
+        </form>
+
+        <select
+          name="type"
+          value={filter.type}
+          onChange={handleFilterChange}
+          className="border rounded px-3 py-2"
+        >
+          <option value="">All Types</option>
+          <option value="lost">Lost</option>
+          <option value="found">Found</option>
+        </select>
+
+        <select
+          name="category"
+          value={filter.category}
+          onChange={handleFilterChange}
+          className="border rounded px-3 py-2"
+        >
+          <option value="">All Categories</option>
+          <option value="electronics">Electronics</option>
+          <option value="clothing">Clothing</option>
+          <option value="accessories">Accessories</option>
+          <option value="documents">Documents</option>
+          <option value="other">Other</option>
+        </select>
+
+        <select
+          name="status"
+          value={filter.status}
+          onChange={handleFilterChange}
+          className="border rounded px-3 py-2"
+        >
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="claimed">Claimed</option>
+          <option value="resolved">Resolved</option>
+          <option value="expired">Expired</option>
+        </select>
+
+        <button
+          onClick={applyFilters}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Apply Filters
+        </button>
+      </div>
+
+      {isLoading ? (
+        <div className="text-center py-4">Loading items...</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="py-2 px-4 text-left">Title</th>
+                <th className="py-2 px-4 text-left">Type</th>
+                <th className="py-2 px-4 text-left">Category</th>
+                <th className="py-2 px-4 text-left">Reported By</th>
+                <th className="py-2 px-4 text-left">Status</th>
+                <th className="py-2 px-4 text-left">Date</th>
+                <th className="py-2 px-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredItems.length > 0 ? (
+                filteredItems.map((item) => (
+                  <tr key={item._id} className="border-t">
+                    <td className="py-2 px-4">{item.title}</td>
+                    <td className="py-2 px-4 capitalize">{item.type}</td>
+                    <td className="py-2 px-4 capitalize">{item.category}</td>
+                    <td className="py-2 px-4">{item.reportedBy?.name || 'Unknown'}</td>
+                    <td className="py-2 px-4">
+                      <span className={`px-2 py-1 rounded text-xs ${item.status === 'active' ? 'bg-green-100 text-green-800' :
+                          item.status === 'claimed' ? 'bg-blue-100 text-blue-800' :
+                            item.status === 'resolved' ? 'bg-purple-100 text-purple-800' :
+                              'bg-gray-100 text-gray-800'
+                        }`}>
+                        {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="py-2 px-4">{new Date(item.createdAt).toLocaleDateString()}</td>
+                    <td className="py-2 px-4 flex gap-2">
+                      <select
+                        value={item.status}
+                        onChange={(e) => handleStatusChange(item._id, e.target.value)}
+                        className="border rounded px-2 py-1"
+                      >
+                        <option value="active">Active</option>
+                        <option value="claimed">Claimed</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="expired">Expired</option>
+                      </select>
+                      <button
+                        onClick={() => openItemDetails(item)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs"
+                      >
+                        View Details
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="py-4 text-center text-gray-500">
+                    No items found matching your criteria
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Item Details Modal */}
+      {selectedItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Item Details</h2>
+              <button
+                onClick={closeItemDetails}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-medium text-lg mb-2">{selectedItem.title}</h3>
+                <p className="text-gray-600 mb-4">{selectedItem.description}</p>
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p className="text-gray-600 font-medium">Type:</p>
+                    <p className="capitalize">{selectedItem.type}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 font-medium">Category:</p>
+                    <p className="capitalize">{selectedItem.category}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 font-medium">Status:</p>
+                    <p className="capitalize">{selectedItem.status}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 font-medium">Date:</p>
+                    <p>{new Date(selectedItem.dateLostOrFound).toLocaleDateString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 font-medium">Location:</p>
+                    <p>{selectedItem.location?.name || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600 font-medium">Reported By:</p>
+                    <p>{selectedItem.reportedBy?.name || 'Unknown'}</p>
+                  </div>
+                </div>
+
+                {selectedItem.identifyingCharacteristics && selectedItem.identifyingCharacteristics.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-gray-600 font-medium">Identifying Characteristics:</p>
+                    <ul className="list-disc pl-5">
+                      {selectedItem.identifyingCharacteristics.map((char, index) => (
+                        <li key={index}>{char.name ? `${char.name}: ${char.value}` : char}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {selectedItem.tags && selectedItem.tags.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-gray-600 font-medium">Tags:</p>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {selectedItem.tags.map((tag, index) => (
+                        <span key={index} className="bg-gray-100 px-2 py-1 rounded text-sm">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {selectedItem.reward && selectedItem.reward.isOffered && (
+                  <div className="mb-4">
+                    <p className="text-gray-600 font-medium">Reward:</p>
+                    <p>{selectedItem.reward.amount} - {selectedItem.reward.description}</p>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                {/* <p className="text-gray-600 font-medium mb-2">Images:</p> */}
+                
+
+                {selectedItem.claims && selectedItem.claims.length > 0 && (
+                  <div className="mt-6">
+                    <p className="text-gray-600 font-medium mb-2">Claims:</p>
+                    <div className="border rounded overflow-hidden">
+                      {selectedItem.claims.map((claim, index) => (
+                        <div
+                          key={index}
+                          className="p-3 border-b last:border-b-0 cursor-pointer hover:bg-gray-50"
+                          onClick={() => openClaimDetails(claim)}
+                        >
+                          <div className="flex justify-between">
+                            <p className="font-medium">{claim.claimant?.name || 'Unknown'}</p>
+                            <span className={`px-2 py-1 rounded text-xs ${claim.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                claim.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                  'bg-red-100 text-red-800'
+                              }`}>
+                              {claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-500">
+                            {new Date(claim.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {selectedClaim && (
+  <ClaimDetails 
+    claim={selectedClaim} 
+    onClose={() => setSelectedClaim(null)} 
+    onStatusChange={handleClaimStatusChange} 
+  />
+)}
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                onClick={() => handleStatusChange(selectedItem._id, 'active')}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                disabled={selectedItem.status === 'active'}
+              >
+                Mark as Active
+              </button>
+              <button
+                onClick={() => handleStatusChange(selectedItem._id, 'claimed')}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                disabled={selectedItem.status === 'claimed'}
+              >
+                Mark as Claimed
+              </button>
+              <button
+                onClick={() => handleStatusChange(selectedItem._id, 'resolved')}
+                className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded"
+                disabled={selectedItem.status === 'resolved'}
+              >
+                Mark as Resolved
+              </button>
+              <button
+                onClick={() => handleStatusChange(selectedItem._id, 'expired')}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                disabled={selectedItem.status === 'expired'}
+              >
+                Mark as Expired
+              </button>
+              <button
+                onClick={closeItemDetails}
+                className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+>>>>>>> origin/main
 // Main Admin Dashboard Component
 function AdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuthStore();
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> origin/main
   useEffect(() => {
     // Redirect to users by default
     if (location.pathname === '/admin') {
@@ -403,11 +1016,16 @@ function AdminDashboard() {
 
   // Check if user is admin
   useEffect(() => {
+<<<<<<< HEAD
     if (user && user.email !== 'rubayet079@gmail.com') {
+=======
+    if (user && user.role !== 'admin') {
+>>>>>>> origin/main
       navigate('/profile');
       toast.error('You do not have permission to access the admin dashboard');
     }
   }, [user, navigate]);
+<<<<<<< HEAD
   
   return (
     <div className="p-6">
@@ -416,24 +1034,58 @@ function AdminDashboard() {
       <div className="mb-6 flex border-b">
         <Link 
           to="/admin/users" 
+=======
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+
+      <div className="mb-6 flex border-b">
+        <Link
+          to="/admin/users"
+>>>>>>> origin/main
           className={`px-4 py-2 ${location.pathname === '/admin/users' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
         >
           User Management
         </Link>
+<<<<<<< HEAD
         <Link 
           to="/admin/reports" 
+=======
+        <Link
+          to="/admin/reports"
+>>>>>>> origin/main
           className={`px-4 py-2 ${location.pathname === '/admin/reports' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
         >
           Report Management
         </Link>
+<<<<<<< HEAD
       </div>
       
       <Routes>
         <Route path="users" element={<UserManagement />} />
         <Route path="reports" element={<ReportManagement />} />
+=======
+        <Link
+          to="/admin/items"
+          className={`px-4 py-2 ${location.pathname === '/admin/items' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+        >
+          Item Management
+        </Link>
+      </div>
+
+      <Routes>
+        <Route path="users" element={<UserManagement />} />
+        <Route path="reports" element={<ReportManagement />} />
+        <Route path="items" element={<ItemManagement />} />
+>>>>>>> origin/main
       </Routes>
     </div>
   );
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 export default AdminDashboard;
